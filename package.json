@@ -8,7 +8,7 @@
     "dev": "nodemon index.js",
     "build:ui": "rm -Force build && cd ../notes-frontend/ && npm run build && cp -Recurse build ../notes-backend",
     "lint": "eslint .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --verbose"
   },
   "author": "Wang Tiaoke",
   "license": "MIT",
@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "eslint": "^8.54.0",
+    "jest": "^29.7.0",
     "nodemon": "^3.0.1"
   }
 }
