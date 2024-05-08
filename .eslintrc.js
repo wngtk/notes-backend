@@ -1,11 +1,14 @@
 module.exports = {
-    'env': {
+    'esinglnv': {
         'browser': true,
         'commonjs': true,
         'es2021': true,
         'node': true,
         'jest': true
     },
+    'plugins': [
+        '@stylistic/js'
+    ],
     'extends': 'eslint:recommended',
     'overrides': [
         {
@@ -47,6 +50,10 @@ module.exports = {
         'arrow-spacing': [
             'error', { 'before': true, 'after': true }
         ],
-        'no-console': 0
+        'no-console': 0,
+        '@stylistic/js/indent': [ 'error', 4 ],
+        '@stylistic/js/linebreak-style': [ 'error', 'unix' ],
+        '@stylistic/js/quotes': [ 'error', 'single' ],
+        '@stylistic/js/semi': [ 'error', 'never' ]
     }
 }
