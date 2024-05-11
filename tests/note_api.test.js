@@ -12,7 +12,10 @@ const Note = require('../models/note')
 describe('when there is initially some notes saved', () => {
   beforeEach(async () => {
     await Note.deleteMany({})
-    await Note.insertMany(helper.initialNotes)
+    await helper.addRootUser()
+    const userId = await helper.rootUserId()
+    const notes = helper.initialNotes.map(n => ({userId, ...n}))
+    await Note.insertMany(notes)
   })
 
   test('notes are returned as json', async () => {
@@ -69,9 +72,11 @@ describe('when there is initially some notes saved', () => {
 
   describe('addition of a new note', () => {
     test('succeeds with valid data', async () => {
+      const userId = await helper.rootUserId()
       const newNote = {
         content: 'async/await simplifies making async calls',
         important: true,
+        userId
       }
 
       await api

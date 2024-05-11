@@ -1,3 +1,4 @@
+const { hash } = require('bcrypt')
 const Note = require('../models/note')
 const User = require('../models/user')
 
@@ -30,7 +31,22 @@ const usersInDb = async () => {
   return users.map(user => user.toJSON())
 }
 
+const addRootUser = async () => {
+  const users = await usersInDb()
+  const usernames = users.map(u => u.username)
+  if (!usernames.includes('root')) {
+    const passwordHash = await hash('sekret', 10)
+    const user = new User({username: 'root', passwordHash})
+    user.save()
+  }
+}
+
+const rootUserId = async () => {
+  const users = await usersInDb()
+  return users.find(u => u.username === 'root').id
+}
+
 module.exports = {
   initialNotes, nonExistingId, notesInDb,
-  usersInDb
+  usersInDb, addRootUser, rootUserId
 }
