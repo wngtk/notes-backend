@@ -1,6 +1,7 @@
 const { hash } = require('bcrypt')
 const Note = require('../models/note')
 const User = require('../models/user')
+const { sign } = require('jsonwebtoken')
 
 const initialNotes = [
   {
@@ -46,7 +47,13 @@ const rootUserId = async () => {
   return users.find(u => u.username === 'root').id
 }
 
+const rootUserToken = async () => {
+  const token = sign({username: root, id: await rootUserId()}, process.env.SECRET)
+  return token
+}
+
+
 module.exports = {
   initialNotes, nonExistingId, notesInDb,
-  usersInDb, addRootUser, rootUserId
+  usersInDb, addRootUser, rootUserId, rootUserToken
 }

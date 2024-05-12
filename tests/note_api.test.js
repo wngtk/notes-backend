@@ -8,12 +8,24 @@ const api = supertest(app)
 const helper = require('./test_helper')
 
 const Note = require('../models/note')
+const User = require('../models/user')
+const { hash } = require('bcrypt')
+const { sign } = require('jsonwebtoken')
 
 describe('when there is initially some notes saved', () => {
+  let token
   beforeEach(async () => {
+    await User.deleteMany({})
+    const passwordHash = await hash('sekret', 10)
+    const user = new User({ username: 'root', passwordHash })
+    await user.save()
+    const userId = user.id
+
+    console.log(userId)
+
+    token = sign({username: user.username, id: userId}, process.env.SECRET, { expiresIn: 60*60 })
+
     await Note.deleteMany({})
-    await helper.addRootUser()
-    const userId = await helper.rootUserId()
     const notes = helper.initialNotes.map(n => ({userId, ...n}))
     await Note.insertMany(notes)
   })
@@ -81,6 +93,7 @@ describe('when there is initially some notes saved', () => {
 
       await api
         .post('/api/notes')
+        .set('Authorization', 'Bearer ' + token)
         .send(newNote)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -99,6 +112,7 @@ describe('when there is initially some notes saved', () => {
 
       await api
         .post('/api/notes')
+        .set('Authorization', 'Bearer ' + token)
         .send(newNote)
         .expect(400)
 
